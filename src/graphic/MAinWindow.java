@@ -87,7 +87,15 @@ public class MAinWindow implements ActionListener {
 		columnNames = new Vector<String>();
 		data = new Vector<Object>();
 
-		
+		try {
+			JDBCengine.connect();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		//afficheResult();
 		afficheConnect();
