@@ -165,6 +165,8 @@ public class MAinWindow implements ActionListener {
 		
 		table = new JTable(data, columnNames);
 		table.setDefaultEditor(Object.class, null);
+		JScrollPane scrollPaneTable = new JScrollPane(table);
+
 	
 		controlPane = new JPanel();
 		controlPane.setBackground(Color.GRAY);
@@ -226,7 +228,7 @@ public class MAinWindow implements ActionListener {
 		
 
 		frame.getContentPane().add(tabPanel, BorderLayout.NORTH);
-		frame.getContentPane().add(table, BorderLayout.CENTER);
+		frame.getContentPane().add(scrollPaneTable, BorderLayout.CENTER);
 		frame.getContentPane().add(controlPane, BorderLayout.SOUTH);		
 	}
 	
