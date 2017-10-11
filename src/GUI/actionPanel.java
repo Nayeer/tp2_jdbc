@@ -30,7 +30,7 @@ public class actionPanel extends JPanel  {
 		
 		buttonCommit = new JButton("Commit");
 
-		buttonReset = new JButton("Reset");
+		buttonReset = new JButton("Resetgood");
 
 		buttonQuit = new JButton("Quit");
 
