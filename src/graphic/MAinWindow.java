@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -41,6 +42,7 @@ public class MAinWindow implements ActionListener {
 	private JTextField field1, field2;
 	private JTextField textField;
 	private JTextField textField_1;
+	private JTextArea textField_u;
 	private JPanel panel;
 	private JTable table;
 	private JTextField textField_2;
@@ -50,6 +52,7 @@ public class MAinWindow implements ActionListener {
 	Vector<String> columnNames;
 	Vector<Object> data;
 	JButton btnConnect;
+	JScrollPane scrollPaneTable;
 	/**
 	 * Launch the application.
 	 */
@@ -83,19 +86,10 @@ public class MAinWindow implements ActionListener {
 		//frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
 		JDBCengine = new JDBCAppConsole(true);
 		columnNames = new Vector<String>();
 		data = new Vector<Object>();
-
-		try {
-			JDBCengine.connect();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		//afficheResult();
 		afficheConnect();
@@ -109,32 +103,45 @@ public class MAinWindow implements ActionListener {
 		//Add connection pane to the window
 		//frame.getContentPane().add(panel);
 		panel.setLayout(null);
-		
+		int w=panel.getWidth();
 		JLabel lblConnection = new JLabel("Connection");
-		lblConnection.setBounds(318, 21, 68, 14);
+		lblConnection.setBounds(w/2-50, 21, 68, 14);
 		panel.add(lblConnection);
 		
 		JLabel lblLogin = new JLabel("Login:");
-		lblLogin.setBounds(264, 135, 42, 14);
+		lblLogin.setBounds(w/2-150, 200, 42, 14);
 		panel.add(lblLogin);
 		
 		JLabel lblPassword = new JLabel("Password:");
-		lblPassword.setBounds(248, 214, 68, 14);
+		lblPassword.setBounds(w/2-150, 250, 68, 14);
 		panel.add(lblPassword);
 		
+		JLabel lblURL = new JLabel("URL:");
+		lblURL.setBounds(w/2-150, 100, 68, 14);
+		panel.add(lblURL);
+		
+		
 		textField = new JTextField();
-		textField.setBounds(365, 132, 86, 20);
-		panel.add(textField);
+		textField.setBounds(w/2+50, 200, 200, 20);
 		textField.setColumns(10);
+		panel.add(textField);
+		textField.setText("root");
+		
+		
+		textField_u= new JTextArea();
+		textField_u.setBounds(w/2+50, 100, 200, 60);
+		textField_u.setText("jdbc:mysql://localhost:3306/coopérative_:@?useSSL=false");
+		textField_u.setLineWrap(true);
+		panel.add(textField_u);
 		
 		textField_1 = new JTextField();
-		textField_1.setBounds(365, 211, 86, 20);
+		textField_1.setBounds(w/2+50, 250, 200, 20);
 		panel.add(textField_1);
-		textField_1.setColumns(10);
+		
 		
 		btnConnect = new JButton("Connect");
 		btnConnect.addActionListener(this);
-		btnConnect.setBounds(309, 296, 89, 23);
+		btnConnect.setBounds(w/2-50, 350, 100, 23);
 		panel.add(btnConnect);
 		frame.getContentPane().add(panel);
 		
@@ -165,7 +172,7 @@ public class MAinWindow implements ActionListener {
 		
 		table = new JTable(data, columnNames);
 		table.setDefaultEditor(Object.class, null);
-		JScrollPane scrollPaneTable = new JScrollPane(table);
+		scrollPaneTable = new JScrollPane(table);
 
 	
 		controlPane = new JPanel();
@@ -194,6 +201,7 @@ public class MAinWindow implements ActionListener {
 		JButton btnReset = new JButton("Reset");
 		btnReset.setBackground(Color.WHITE);
 		btnReset.setForeground(new Color(255, 153, 0));
+		btnReset.addActionListener(this);
 		panel_5.add(btnReset);
 		
 		
@@ -244,7 +252,7 @@ public class MAinWindow implements ActionListener {
 	//enlever le panel de connection de la fenetre
 	public void displayConnectionPane(){
 		frame.getContentPane().remove(tabPanel);
-		frame.getContentPane().remove(table);
+		frame.getContentPane().remove(scrollPaneTable);
 		frame.getContentPane().remove(controlPane);
 		afficheConnect();
 		SwingUtilities.updateComponentTreeUI(frame);
@@ -276,16 +284,35 @@ public class MAinWindow implements ActionListener {
 
 				break;
 			case "Connect":
-				removeConnectionPane();
+				connection();
 				break;
 			case "Quit":
 				displayConnectionPane();
+				break;
+			case "Reset":
+				textField_2.setText("");
 				break;
 				
 			}
 		}
 	}
 	
+	
+	public void connection(){
+		JDBCengine.setURL(textField_u.getText());
+		JDBCengine.setLog(textField.getText());
+		JDBCengine.setPass(textField_1.getText());
+		try {
+			JDBCengine.connect();
+			removeConnectionPane();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	private void afficheResultSet(ResultSet result) throws SQLException  {
 	    columnNames.clear();
