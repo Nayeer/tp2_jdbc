@@ -52,6 +52,7 @@ public class MAinWindow implements ActionListener {
 	Vector<String> columnNames;
 	Vector<Object> data;
 	JButton btnConnect;
+	JCheckBox chckbxAutocommit;
 	JScrollPane scrollPaneTable;
 	/**
 	 * Launch the application.
@@ -103,6 +104,9 @@ public class MAinWindow implements ActionListener {
 		//Add connection pane to the window
 		//frame.getContentPane().add(panel);
 		panel.setLayout(null);
+		
+
+		
 		int w=panel.getWidth();
 		JLabel lblConnection = new JLabel("Connection");
 		lblConnection.setBounds(w/2-50, 21, 68, 14);
@@ -120,6 +124,11 @@ public class MAinWindow implements ActionListener {
 		lblURL.setBounds(w/2-150, 100, 68, 14);
 		panel.add(lblURL);
 		
+		//POUR FACILITER LA CONNECTION : A SUPPRIMER
+		JCheckBox valentin = new JCheckBox("Valentin");
+		valentin.setBounds(w/2-50, 100, 100, 30);
+		valentin.addActionListener(this);
+		panel.add(valentin);
 		
 		textField = new JTextField();
 		textField.setBounds(w/2+50, 200, 200, 20);
@@ -128,9 +137,13 @@ public class MAinWindow implements ActionListener {
 		textField.setText("root");
 		
 		
+
+		
 		textField_u= new JTextArea();
 		textField_u.setBounds(w/2+50, 100, 200, 60);
-		textField_u.setText("jdbc:mysql://localhost:3306/coopérative_:@?useSSL=false");
+		//jdbc:mysql://127.0.0.1:3306/cooperative?autoReconnect=true&useSSL=false
+		//jdbc:mysql://localhost:3306/coopérative_:@?useSSL=false
+		textField_u.setText("jdbc:mysql://127.0.0.1:3306/cooperative?autoReconnect=true&useSSL=false");
 		textField_u.setLineWrap(true);
 		panel.add(textField_u);
 		
@@ -138,15 +151,17 @@ public class MAinWindow implements ActionListener {
 		textField_1.setBounds(w/2+50, 250, 200, 20);
 		panel.add(textField_1);
 		
-		
 		btnConnect = new JButton("Connect");
 		btnConnect.addActionListener(this);
 		btnConnect.setBounds(w/2-50, 350, 100, 23);
 		panel.add(btnConnect);
 		frame.getContentPane().add(panel);
 		
+
 		
 	}
+	
+
 		
 	public void afficheResult(){
 		
@@ -216,16 +231,20 @@ public class MAinWindow implements ActionListener {
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		
-		JCheckBox chckbxAutocommit = new JCheckBox("AutoCommit");
+		chckbxAutocommit = new JCheckBox("AutoCommit");
 		chckbxAutocommit.setBackground(Color.LIGHT_GRAY);
+		chckbxAutocommit.setSelected(true);
+		chckbxAutocommit.addActionListener(this);
 		panel_3.add(chckbxAutocommit);
 		
 		JButton btnCommit = new JButton("Commit");
 		btnCommit.setBackground(Color.LIGHT_GRAY);
+		btnCommit.addActionListener(this);
 		panel_3.add(btnCommit);
 		
-		JButton btnRollback = new JButton("RollBack");
+		JButton btnRollback = new JButton("Rollback");
 		btnRollback.setBackground(Color.LIGHT_GRAY);
+		btnRollback.addActionListener(this);
 		panel_3.add(btnRollback);
 
 		controlPane.add(panel_3);
@@ -266,7 +285,9 @@ public class MAinWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object source = e.getSource();
+
 		if (source.getClass() == new JButton().getClass()) {
+
 			switch( ((JButton) source).getText() ) {
 			case "Go" : 
 				System.out.println("go");
@@ -281,7 +302,12 @@ public class MAinWindow implements ActionListener {
 						e1.printStackTrace();
 					}
 				}
-
+				break;
+			case "Commit":
+				JDBCengine.commit();
+				break;
+			case "Rollback":
+				JDBCengine.rollback();
 				break;
 			case "Connect":
 				connection();
@@ -293,6 +319,21 @@ public class MAinWindow implements ActionListener {
 				textField_2.setText("");
 				break;
 				
+			}
+		}
+		else if (source.getClass() == new JCheckBox().getClass()) {
+			switch( ((JCheckBox) source).getText() ) {
+			case "AutoCommit" : 
+				JDBCengine.autoCommit();
+				break;
+			//A SUPPRIMER
+			case "Valentin" : 
+				if ( ((JCheckBox)source).isSelected()) {
+					textField_u.setText("jdbc:mysql://localhost:3306/coopérative_:@?useSSL=false");
+				}
+				else {
+					textField_u.setText("jdbc:mysql://127.0.0.1:3306/cooperative?autoReconnect=true&useSSL=false");
+				}
 			}
 		}
 	}
@@ -315,6 +356,7 @@ public class MAinWindow implements ActionListener {
 	}
 	
 	private void afficheResultSet(ResultSet result) throws SQLException  {
+		if (result != null) {
 	    columnNames.clear();
 	    data.clear();
 	    ResultSetMetaData rsmd = result.getMetaData();
@@ -335,5 +377,6 @@ public class MAinWindow implements ActionListener {
 	    }
 	    
 		((DefaultTableModel) table.getModel()).fireTableStructureChanged();
+	  }
 	}
 }
