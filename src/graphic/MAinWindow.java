@@ -288,6 +288,12 @@ public class MAinWindow implements ActionListener {
 				break;
 			case "Quit":
 				displayConnectionPane();
+				try {
+					JDBCengine.connection.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				break;
 			case "Reset":
 				textField_2.setText("");
