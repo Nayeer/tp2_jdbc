@@ -338,9 +338,11 @@ public class AddPanel extends JPanel implements ActionListener {
 				break;
 			case "Annuler tout":
 				try {
-					actualStatement.clearBatch();
-					actualStatement.close();
-					actualStatement = null;
+					if (actualStatement != null ){
+						actualStatement.clearBatch();
+						actualStatement.close();
+						actualStatement = null;
+					}
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(this, "Error : " + e1.getMessage());
 				}
