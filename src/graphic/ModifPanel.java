@@ -21,8 +21,6 @@ public class ModifPanel extends JPanel {
              tables_name.add(rs.getString("TABLE_NAME"));
          }
          
-         System.out.println(tables_name);
-         
          
 	}
 }

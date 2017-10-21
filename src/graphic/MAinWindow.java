@@ -65,7 +65,7 @@ public class MAinWindow implements ActionListener {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setTitle("JDBC");
-		frame.setSize(900, 500);
+		frame.setSize(900, 700);
 		//frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
