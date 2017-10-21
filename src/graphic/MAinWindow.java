@@ -3,12 +3,6 @@ package graphic;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
-
 import jdbcConsole.JDBCAppConsole;
 
 import java.awt.CardLayout;
@@ -19,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
@@ -37,6 +30,7 @@ public class MAinWindow implements ActionListener {
 	JScrollPane scrollPaneTable;
 	Connection connection;
 	ModifPanel modifPanel;
+	AddPanel addPanel;
 	ConnectionPanel connectionPanel;
 	ConnectedPanel connectedPanel;
 	CardLayout cardLayout;
@@ -94,12 +88,16 @@ public class MAinWindow implements ActionListener {
 		connectedPanel.btnCommit.addActionListener(this);
 		connectedPanel.btnRollback.addActionListener(this);
 		connectedPanel.chckbxAutocommit.addActionListener(this);
+		
+		//Menu bar
 		connectedPanel.mntmModification.addActionListener(this);
 		connectedPanel.mntmView.addActionListener(this);
+		connectedPanel.mntmAjouts.addActionListener(this);
 
 		
 		
 		modifPanel = null;
+		addPanel = null;
 		
 		
 
@@ -121,7 +119,9 @@ public class MAinWindow implements ActionListener {
 		try {
 			connection = JDBCengine.connect();
 			modifPanel = new ModifPanel(connection);
+			addPanel = new AddPanel(connection);
 			cards.add(modifPanel, "modifPanel");
+			cards.add(addPanel, "addPanel");
 			showConnectedPanel();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -212,6 +212,9 @@ public class MAinWindow implements ActionListener {
 				break;
 			case "View" : 
 				showConnectedPanel();
+				break;
+			case "Ajouts" : 
+				cardLayout.show(cards, "addPanel");
 				break;
 			}
 		}

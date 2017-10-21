@@ -34,6 +34,7 @@ public class ConnectedPanel extends JPanel {
 	JTable table;
 	JMenuItem mntmModification;
 	JMenuItem mntmView;
+	JMenuItem mntmAjouts;
 
 	public ConnectedPanel() {
 		
@@ -51,6 +52,9 @@ public class ConnectedPanel extends JPanel {
 		
 		mntmModification = new JMenuItem("Modification");
 		mnEditer.add(mntmModification);
+		
+		mntmAjouts = new JMenuItem("Ajouts");
+		mnEditer.add(mntmAjouts);
 		
 		
 		JLabel lblConnectionResult = new JLabel("Connection Result");
