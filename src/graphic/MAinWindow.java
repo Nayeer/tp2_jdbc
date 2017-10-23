@@ -22,7 +22,7 @@ public class MAinWindow implements ActionListener {
 
 	private JFrame frame;
 
-	JDBCAppConsole JDBCengine;
+	public static JDBCAppConsole JDBCengine;
 	Vector<String> columnNames;
 	Vector<Object> data;
 	JButton btnConnect;
