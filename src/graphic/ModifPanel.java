@@ -11,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -19,7 +20,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
+import javax.swing.text.html.parser.Entity;
 
 
 public class ModifPanel extends JPanel implements ActionListener, PropertyChangeListener {
@@ -41,13 +46,18 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 	JPanel actualEntriesPanel;
 	GridBagConstraints gbc;
 	JComboBox<String> tablesComboBox;
-	JButton btnNext;
+	JButton btnNext, btnValid, btnAnnule;
 	JCheckBox addBatch;
 	ResultSet valuesRS;
 	String selected_table;
+	String actualUpdateQuery;
+	PreparedStatement actualStatement;
+	Connection connection;
+	
 
 	public ModifPanel(Connection connection) throws SQLException {
 		this.setLayout(new GridBagLayout());
+		this.connection=connection;
 		gbc = new GridBagConstraints();
 		
 		md = connection.getMetaData();
@@ -90,12 +100,20 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
       this.add(actualEntriesPanel, gbc);
       
 
-  
+      JPanel panebtn=new JPanel();
+      panebtn.setLayout(new GridLayout(0, 1));
       btnNext= new JButton("Next");
       btnNext.addActionListener(this);
       addBatch= new JCheckBox("Batch Mode");
-      this.add(btnNext);
-      this.add(addBatch);
+      btnValid=new JButton("Valider");
+      btnValid.addActionListener(this);
+      btnAnnule=new JButton("Annuler");
+      btnAnnule.addActionListener(this);
+      panebtn.add(addBatch);
+      panebtn.add(btnNext);
+      panebtn.add(btnAnnule);
+      panebtn.add(btnValid);
+      this.add(panebtn);
 	
 	}
 	
@@ -200,7 +218,36 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 					System.out.println("next");
 					try {
 						if(valuesRS.next()) {
+							actualUpdateQuery=generateUpdateQuery();							
+							try {
+								actualStatement = connection.prepareStatement(actualUpdateQuery);
+								int i;
+								for( i=0; i<all_fields.size() ; i++) {
+									String fieldValue = all_fields.get(i).getText();
+									//Les donnees des champs texte sont, en théorie, déjà vérifiés.
+									actualStatement.setObject(i+1, fieldValue.isEmpty() ? null : fieldValue ) ;
+								}
+								actualStatement.setObject(i+1, all_fields.get(0).getText().isEmpty()?null:all_fields.get(0).getText());
+								System.out.println(actualStatement);
+								if(addBatch.isSelected()){
+									actualStatement.addBatch();
+									JOptionPane.showMessageDialog(this, "L'update en mode batch a bien été effectué.");
+								}
+								else {
+									actualStatement.execute();
+									actualStatement.clearParameters();
+									actualStatement.close();
+									JOptionPane.showMessageDialog(this, "L'update a bien été effectué.");
+								}
+								
+							}catch (SQLException esql) {
+								JOptionPane.showMessageDialog(this, esql.getMessage());
+							}
+							finally {
+								actualStatement = null;
+							}
 							changeActualEntriesPanel(selected_table);
+		
 						} else {
 							updateValuesRS(selected_table);
 							valuesRS.previous();
@@ -212,10 +259,76 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 						e1.printStackTrace();
 					}
 					break;
+				case "Valider":
+					try {
+						if (actualStatement != null) {
+							int rows[] = actualStatement.executeBatch();
+							JOptionPane.showMessageDialog(this, "Le(s) ajout(s) se sont bien terminés.");
+						} else {
+							JOptionPane.showMessageDialog(this, "Execution impossible, il n'y a pas eu d'ajout en mode batch !");
+							System.out.println("ModifPanel.actionPerformed()");
+						}
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(this, "Error : " + e1.getMessage());
+					}
+					finally {
+						actualStatement = null;
+					}
+					break;
+				case "Annuler":
+					try {
+						if (actualStatement != null ){
+							actualStatement.clearBatch();
+							actualStatement.close();
+							actualStatement = null;
+						}
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(this, "Error : " + e1.getMessage());
+					}
+					break;
 			}
 			
 		}
 	}
+	
+	
+	public String generateUpdateQuery() {
+		ResultSet rs;
+		String query = "";
+		HashMap<Integer,String> colnames=new HashMap<Integer,String>();
+		int nbColumn = 0;
+		try {
+			rs = md.getColumns(null, null, selected_table, null);
+		    while (rs.next()) {
+		    	colnames.put(nbColumn,rs.getString("COLUMN_NAME"));
+		        nbColumn = nbColumn + 1;
+		    }		    
+			Iterator entries = colnames.entrySet().iterator();
+		    query="update `"+ selected_table+ "` set ";
+		    while(entries.hasNext()){
+		    	Entry<Integer, String> next=(Entry<Integer, String>) entries.next();
+		    	query= ""+query+" `"+ next.getValue()+ "` = ?";
+		    	if(entries.hasNext()){
+		    		query=query+", ";
+		    	}
+		    	
+		    }
+		    //en supposant que la première colonne soit une clé primaire
+		    query=query+" where `"+colnames.get(0)+ "` = ?;";
+		    
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(query);
+		return query;		
+	}
+	
+
+	
+	
+	
+	
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -224,6 +337,11 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 	
 	
 	public void updateTable(ResultSet res) throws SQLException{
+	
+		if (addBatch.isSelected()) {
+			MAinWindow.JDBCengine.autoCommit();
+		}
+		
 		ResultSetMetaData rsmd=res.getMetaData();
 		while(res.next()){
 			for(int i=1;i<=rsmd.getColumnCount(); i++){
