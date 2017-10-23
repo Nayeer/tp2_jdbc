@@ -185,4 +185,14 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 	public void propertyChange(PropertyChangeEvent evt) {
 		// TODO Auto-generated method stub
 	}
+	
+	
+	public void updateTable(ResultSet res) throws SQLException{
+		ResultSetMetaData rsmd=res.getMetaData();
+		while(res.next()){
+			for(int i=1;i<=rsmd.getColumnCount(); i++){
+				
+			}
+		}
+	}
 }
