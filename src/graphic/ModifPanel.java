@@ -140,17 +140,11 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 		int i=1;
 
   	  while (rs.next()) {
-  		  System.out.println(i);
   		JLabel label = new JLabel(rs.getString("COLUMN_NAME") + " (" + rs.getString("TYPE_NAME") + " " + rs.getString("COLUMN_SIZE")+ ")");
   		panel.add(label);
   		JFormattedTextField ft = new JFormattedTextField();
   		
   		//Verification basique des types int , double/float et date 
-
-
-  			//System.out.println(valuesRS.getString(1));
-  			
-  			
   		if (rs.getString("TYPE_NAME").equals("INT")) {
   			ft.setValue(new Integer(0)); //Creation implicite d'un formatter de type Integer
   			ft.setText(""+valuesRS.getInt(i));

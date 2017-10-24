@@ -135,6 +135,7 @@ public class AddPanel extends JPanel implements ActionListener {
 	
       //Affichage par défaut de la première table
       selectedTable = tables_name.get(0);
+      actualInsertQuery = generateInsertQuery();
   	  actualEntriesPanel = entriesComponentPanel();
   	  //Elements de disposition
       gbc.anchor = GridBagConstraints.LINE_START;
@@ -284,9 +285,9 @@ public class AddPanel extends JPanel implements ActionListener {
 					actualStatement = connection.prepareStatement(actualInsertQuery);
 	
 					for(int i=0 ; i<all_fields.size() ; i++) {
-						String fieldValue = all_fields.get(i).getText();
-						//Les donnees des champs texte sont, en théorie, déjà vérifiés.
-						actualStatement.setObject(i+1, fieldValue.isEmpty() ? null : fieldValue ) ;
+						String fieldValue = all_fields.get(i).getText().toString();
+						//Les donnees des champs sont, en théorie, déjà vérifiés.
+						actualStatement.setObject(i+1, fieldValue.isEmpty() ? null : fieldValue.replaceAll("\\u00a0","") ) ;
 					}
 					actualStatement.execute();
 					actualStatement.clearParameters();
@@ -304,8 +305,8 @@ public class AddPanel extends JPanel implements ActionListener {
 					actualStatement = connection.prepareStatement(actualInsertQuery);
 					for(int i=0 ; i<all_fields.size() ; i++) {
 						String fieldValue = all_fields.get(i).getText();
-						//Les donnees des champs texte sont, en théorie, déjà vérifiés.
-						actualStatement.setObject(i+1, fieldValue.isEmpty() ? null : fieldValue ) ;
+						//Les donnees des champs texte sont, en théorie, déjà vérifiés. 
+						actualStatement.setObject(i+1, fieldValue.isEmpty() ? null : fieldValue.replaceAll("\\u00a0","") ) ;
 					}
 					actualStatement.addBatch();
 					JOptionPane.showMessageDialog(this, "L'ajout en mode batch a bien été effectué.");
