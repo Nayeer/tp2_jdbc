@@ -11,10 +11,42 @@ import javax.swing.JTextField;
 
 public class ConnectionPanel extends JPanel {
 	
-	JTextField loginTextField;
-	JTextField psswdTextField;
-	JTextArea urlTextArea;
-	JButton btnConnect;
+	private JTextField loginTextField;
+	private JTextField psswdTextField;
+	private JTextArea urlTextArea;
+	private JButton btnConnect;
+
+	public JTextField getLoginTextField() {
+		return loginTextField;
+	}
+
+	public void setLoginTextField(JTextField loginTextField) {
+		this.loginTextField = loginTextField;
+	}
+
+	public JTextField getPsswdTextField() {
+		return psswdTextField;
+	}
+
+	public void setPsswdTextField(JTextField psswdTextField) {
+		this.psswdTextField = psswdTextField;
+	}
+
+	public JTextArea getUrlTextArea() {
+		return urlTextArea;
+	}
+
+	public void setUrlTextArea(JTextArea urlTextArea) {
+		this.urlTextArea = urlTextArea;
+	}
+
+	public JButton getBtnConnect() {
+		return btnConnect;
+	}
+
+	public void setBtnConnect(JButton btnConnect) {
+		this.btnConnect = btnConnect;
+	}
 
 	public ConnectionPanel() {
 

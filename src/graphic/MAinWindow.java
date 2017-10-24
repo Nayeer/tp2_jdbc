@@ -76,7 +76,7 @@ public class MAinWindow implements ActionListener {
 		
 		connectionPanel = new ConnectionPanel();
 		
-		connectionPanel.btnConnect.addActionListener(this);
+		connectionPanel.getBtnConnect().addActionListener(this);
 		
 		connectedPanel = new ConnectedPanel();
 		connectedPanel.setVisible(false);
@@ -111,9 +111,9 @@ public class MAinWindow implements ActionListener {
 	}
 	
 	public void connection(){
-		JDBCengine.setURL(connectionPanel.urlTextArea.getText());
-		JDBCengine.setLog(connectionPanel.loginTextField.getText());
-		JDBCengine.setPass(connectionPanel.psswdTextField.getText());
+		JDBCengine.setURL(connectionPanel.getUrlTextArea().getText());
+		JDBCengine.setLog(connectionPanel.getLoginTextField().getText());
+		JDBCengine.setPass(connectionPanel.getPsswdTextField().getText());
 		try {
 			connection = JDBCengine.connect();
 			modifPanel = new ModifPanel(connection, JDBCengine);
