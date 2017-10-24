@@ -220,7 +220,9 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 						if(valuesRS.next()) {
 							actualUpdateQuery=generateUpdateQuery();							
 							try {
-								actualStatement = connection.prepareStatement(actualUpdateQuery);
+								if(actualStatement==null){
+									actualStatement = connection.prepareStatement(actualUpdateQuery);
+								}
 								int i;
 								for( i=0; i<all_fields.size() ; i++) {
 									String fieldValue = all_fields.get(i).getText();
@@ -243,16 +245,12 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 							}catch (SQLException esql) {
 								JOptionPane.showMessageDialog(this, esql.getMessage());
 							}
-							finally {
-								actualStatement = null;
-							}
 							changeActualEntriesPanel(selected_table);
 		
 						} else {
 							updateValuesRS(selected_table);
 							valuesRS.previous();
-							JOptionPane.showMessageDialog(this, "Il n'y a plus d'entrées dans cette table. "
-									+ "Appuyez sur le bouton Next pour recommencer depuis le début.");
+
 						};
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
