@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 
 public class ConnectionPanel extends JPanel {
 	
-	JCheckBox valentin;
 	JTextField loginTextField;
 	JTextField psswdTextField;
 	JTextArea urlTextArea;

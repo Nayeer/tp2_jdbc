@@ -22,19 +22,19 @@ public class MAinWindow implements ActionListener {
 
 	private JFrame frame;
 
-	public static JDBCAppConsole JDBCengine;
-	Vector<String> columnNames;
-	Vector<Object> data;
-	JButton btnConnect;
-	JCheckBox chckbxAutocommit;
-	JScrollPane scrollPaneTable;
-	Connection connection;
-	ModifPanel modifPanel;
-	AddPanel addPanel;
-	ConnectionPanel connectionPanel;
-	ConnectedPanel connectedPanel;
-	CardLayout cardLayout;
-	JPanel cards;
+	private JDBCAppConsole JDBCengine;
+	private Vector<String> columnNames;
+	private Vector<Object> data;
+	private JButton btnConnect;
+	private JCheckBox chckbxAutocommit;
+	private JScrollPane scrollPaneTable;
+	private Connection connection;
+	private ModifPanel modifPanel;
+	private AddPanel addPanel;
+	private ConnectionPanel connectionPanel;
+	private ConnectedPanel connectedPanel;
+	private CardLayout cardLayout;
+	private JPanel cards;
 	
 	/**
 	 * Launch the application.
@@ -116,7 +116,7 @@ public class MAinWindow implements ActionListener {
 		JDBCengine.setPass(connectionPanel.psswdTextField.getText());
 		try {
 			connection = JDBCengine.connect();
-			modifPanel = new ModifPanel(connection);
+			modifPanel = new ModifPanel(connection, JDBCengine);
 			addPanel = new AddPanel(connection);
 			cards.add(modifPanel, "modifPanel");
 			cards.add(addPanel, "addPanel");

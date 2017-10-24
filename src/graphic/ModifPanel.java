@@ -37,26 +37,29 @@ import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 import javax.swing.text.html.parser.Entity;
 
+import jdbcConsole.JDBCAppConsole;
+
 
 public class ModifPanel extends JPanel implements ActionListener, PropertyChangeListener {
 	
-	List<JFormattedTextField> all_fields;
-	List<String> tables_name;
-	DatabaseMetaData md;
-	JPanel actualEntriesPanel;
-	GridBagConstraints gbc;
-	JComboBox<String> tablesComboBox;
-	JButton btnNext, btnValid, btnAnnule;
-	JCheckBox addBatch;
-	ResultSet valuesRS;
-	String selected_table;
-	String actualUpdateQuery;
-	PreparedStatement actualStatement;
-	Connection connection;
-	
+	private List<JFormattedTextField> all_fields;
+	private List<String> tables_name;
+	private DatabaseMetaData md;
+	private JPanel actualEntriesPanel;
+	private GridBagConstraints gbc;
+	private	JComboBox<String> tablesComboBox;
+	private JButton btnNext, btnValid, btnAnnule;
+	private JCheckBox addBatch;
+	private ResultSet valuesRS;
+	private String selected_table;
+	private String actualUpdateQuery;
+	private PreparedStatement actualStatement;
+	private Connection connection;
+	private JDBCAppConsole JDBCengine;
 
-	public ModifPanel(Connection connection) throws SQLException {
+	public ModifPanel(Connection connection, JDBCAppConsole JDBCengine) throws SQLException {
 		this.setLayout(new GridBagLayout());
+		this.JDBCengine=JDBCengine;
 		this.connection=connection;
 		gbc = new GridBagConstraints();
 		
@@ -122,7 +125,7 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 		String buffer = "select * from "+ selectedTable;
 		s.append(buffer);
 		try {
-			valuesRS=(MAinWindow.JDBCengine.executeStatement(s));
+			valuesRS=(JDBCengine.executeStatement(s));
 			valuesRS.next(); //Pour que la première valeur soit accessible
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -233,6 +236,7 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 									actualStatement.execute();
 									actualStatement.clearParameters();
 									actualStatement.close();
+									actualStatement=null;
 									JOptionPane.showMessageDialog(this, "L'update a bien été effectué.");
 								}
 								
@@ -331,7 +335,7 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 	public void updateTable(ResultSet res) throws SQLException{
 	
 		if (addBatch.isSelected()) {
-			MAinWindow.JDBCengine.autoCommit();
+			JDBCengine.autoCommit();
 		}
 		
 		ResultSetMetaData rsmd=res.getMetaData();
