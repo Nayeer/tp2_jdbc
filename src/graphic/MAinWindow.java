@@ -75,9 +75,7 @@ public class MAinWindow implements ActionListener {
 		data = new Vector<Object>();
 		
 		connectionPanel = new ConnectionPanel();
-		//A supprimer
-		connectionPanel.valentin.addActionListener(this);
-		//
+		
 		connectionPanel.btnConnect.addActionListener(this);
 		
 		connectedPanel = new ConnectedPanel();
@@ -194,14 +192,6 @@ public class MAinWindow implements ActionListener {
 			case "AutoCommit" : 
 				JDBCengine.autoCommit();
 				break;
-			//A SUPPRIMER
-			case "Valentin" : 
-				if ( ((JCheckBox)source).isSelected()) {
-					connectionPanel.urlTextArea.setText("jdbc:mysql://localhost:3306/coopérative_:@?useSSL=false");
-				}
-				else {
-					connectionPanel.urlTextArea.setText("jdbc:mysql://127.0.0.1:3306/cooperative?autoReconnect=true&useSSL=false");
-				}
 			}
 		}
 		else if (source.getClass() == new JMenuItem().getClass()) {

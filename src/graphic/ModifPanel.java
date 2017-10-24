@@ -286,7 +286,7 @@ public class ModifPanel extends JPanel implements ActionListener, PropertyChange
 	
 	public String generateUpdateQuery() {
 		ResultSet rs;
-		String query = "";
+		String query = ""; 
 		HashMap<Integer,String> colnames=new HashMap<Integer,String>();
 		int nbColumn = 0;
 		try {

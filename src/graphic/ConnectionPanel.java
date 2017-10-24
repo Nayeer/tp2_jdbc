@@ -42,11 +42,7 @@ public class ConnectionPanel extends JPanel {
 		lblURL.setBounds(w/2-150, 100, 68, 14);
 		this.add(lblURL);
 		
-		//POUR FACILITER LA CONNECTION : A SUPPRIMER
-		valentin = new JCheckBox("Valentin");
-		valentin.setBounds(w/2-50, 100, 100, 30);
-		this.add(valentin);
-		
+
 		loginTextField = new JTextField();
 		loginTextField.setBounds(w/2+50, 200, 200, 20);
 		loginTextField.setColumns(10);
